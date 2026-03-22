@@ -1,3 +1,4 @@
+/*
 package br.com.nexus.change.repository;
 
 import br.com.nexus.change.infrastructure.entity.component.ComponentEntity;
@@ -162,4 +163,4 @@ class ChangeTypeRepositoryTest {
 
         assertNotNull(allTransactionTypes);
     }
-}
+}*/

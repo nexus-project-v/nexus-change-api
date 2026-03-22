@@ -48,7 +48,7 @@ public class ChangeResources {
         this.changeApiMapper = changeApiMapper;
     }
 
-    @Operation(summary = "Create a new Change", tags = {"transactions", "post"})
+    @Operation(summary = "Create a new Change", tags = {"changes", "post"})
     @ApiResponse(responseCode = "201", content = {
             @Content(schema = @Schema(implementation = ChangeResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
@@ -59,13 +59,13 @@ public class ChangeResources {
         var transaction = changeApiMapper.fromRequest(request);
         Change saved = createChangePort.save(transaction);
         if (saved == null) {
-            throw new ResourceFoundException("Produto não encontroado ao cadastrar");
+            throw new ResourceFoundException("Change não encontroado ao cadastrar");
         }
         URI location = RestUtils.getUri(saved.getId());
         return ResponseEntity.created(location).body(changeApiMapper.fromEntity(saved));
     }
 
-    @Operation(summary = "Update a Change by Id", tags = {"transactions", "put"})
+    @Operation(summary = "Update a Change by Id", tags = {"changes", "put"})
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = ChangeResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
@@ -77,14 +77,14 @@ public class ChangeResources {
         var transaction = changeApiMapper.fromRequest(request);
         Change updated = updateChangePort.update(id, transaction);
         if (updated == null) {
-            throw new ResourceFoundException("Produto não encontroado ao atualizar");
+            throw new ResourceFoundException("Change não encontroado ao atualizar");
         }
 
         ChangeResponse transactionResponse = changeApiMapper.fromEntity(updated);
         return ResponseEntity.ok(transactionResponse);
     }
 
-    @Operation(summary = "Update a Change by Id", tags = {"transactions", "put"})
+    @Operation(summary = "Update a Change by Id", tags = {"changes", "put"})
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = ChangeResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
@@ -94,14 +94,14 @@ public class ChangeResources {
     public ResponseEntity<ChangeResponse> updateStatus(@PathVariable("changeId") UUID changeId, @PathVariable("status") String status) {
         Change updated = updateChangePort.updateStatusById(changeId, status);
         if (updated == null) {
-            throw new ResourceFoundException("Produto não encontroado ao atualizar");
+            throw new ResourceFoundException("Change não encontroado ao atualizar");
         }
 
         ChangeResponse transactionResponse = changeApiMapper.fromEntity(updated);
         return ResponseEntity.ok(transactionResponse);
     }
 
-    @Operation(summary = "Retrieve all Change", tags = {"transactions", "get", "filter"})
+    @Operation(summary = "Retrieve all Change", tags = {"changes", "get", "filter"})
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = ChangeResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "204", description = "There are no Associations", content = {
@@ -120,7 +120,7 @@ public class ChangeResources {
     @Operation(
             summary = "Retrieve a Change by Id",
             description = "Get a Change object by specifying its id. The response is Association object with id, title, description and published status.",
-            tags = {"transactions", "get"})
+            tags = {"changes", "get"})
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = ChangeResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
@@ -129,14 +129,14 @@ public class ChangeResources {
     public ResponseEntity<ChangeResponse> findOne(@PathVariable("id") UUID id) {
         Change changeSaved = findByIdChangePort.findById(id);
         if (changeSaved == null) {
-            throw new ResourceFoundException("Produto não encontrado ao buscar por id");
+            throw new ResourceFoundException("Changes não encontrado ao buscar por id");
         }
 
         ChangeResponse transactionResponse = changeApiMapper.fromEntity(changeSaved);
         return ResponseEntity.ok(transactionResponse);
     }
 
-    @Operation(summary = "Delete a Change by Id", tags = {"transactiontrus", "delete"})
+    @Operation(summary = "Delete a Change by Id", tags = {"changes", "delete"})
     @ApiResponse(responseCode = "204", content = {@Content(schema = @Schema())})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
     @DeleteMapping(path = "/{id}")

@@ -11,10 +11,14 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Component
-@RequiredArgsConstructor
-public class ChangePreparedEvent implements ChangeEventPublisher {
+public class ChangePreparedEventAdapter implements ChangeEventPublisher {
 
     private final KafkaTemplate<String, EventEnvelope<ChangePreparedPayload>> kafkaTemplate;
+
+    public ChangePreparedEventAdapter(KafkaTemplate<String, EventEnvelope<ChangePreparedPayload>> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
 
     public void publish(ChangePreparedPayload payload) {
         EventEnvelope<ChangePreparedPayload> envelope =

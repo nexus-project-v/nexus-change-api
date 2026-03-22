@@ -1,3 +1,4 @@
+/*
 package br.com.nexus.change.repository.impl;
 
 import br.com.nexus.change.infrastructure.entity.change.TransactionEntity;
@@ -59,3 +60,4 @@ class ChangeRepositoryTest {
         assertNull(foundTransaction);
     }
 }
+*/

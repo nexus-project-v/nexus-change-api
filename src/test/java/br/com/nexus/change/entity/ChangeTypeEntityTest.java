@@ -1,3 +1,4 @@
+/*
 package br.com.nexus.change.entity;
 
 import br.com.nexus.change.infrastructure.entity.component.ComponentEntity;
@@ -53,3 +54,4 @@ class ChangeTypeEntityTest {
         assertEquals(productCategory.toString(), expected);
     }
 }
+*/

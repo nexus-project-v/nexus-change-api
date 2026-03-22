@@ -13,13 +13,14 @@ public interface ChangeMapper {
 
     @Mapping(source = "title", target = "title")
     @Mapping(source = "description", target = "description")
-    @Mapping(source = "componentId", target = "component.id")
+    @Mapping(source = "componentId", target = "componentEntity.id")
     @Mapping(source = "environment", target = "environment")
     @Mapping(source = "changeType", target = "changeType")
     @Mapping(source = "requestBy", target = "requestBy")
     ChangeEntity fromModelTpEntity(Change change);
 
     @InheritInverseConfiguration
+    @Mapping(target = "id", source = "id")
     Change fromEntityToModel(ChangeEntity changeEntity);
 
     List<Change> map(List<ChangeEntity> changeEntities);

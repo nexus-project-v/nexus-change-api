@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "br.com.nexus.transaction.infrastructure.repository")
-@EntityScan(basePackages = "br.com.nexus.transaction.infrastructure.entity")
+@EnableJpaRepositories(basePackages = "br.com.nexus.change.infrastructure.repository")
+@EntityScan(basePackages = "br.com.nexus.change.infrastructure.entity")
 @EnableScheduling
 public class RunApplication {
 

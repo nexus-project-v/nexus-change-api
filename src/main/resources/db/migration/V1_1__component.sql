@@ -1,4 +1,4 @@
-create table changes.tb_component
+create table change.tb_component
 (
     id                 UUID PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
     name               varchar(255)                                not null,

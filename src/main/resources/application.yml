@@ -48,7 +48,7 @@ spring:
       matching-strategy: "path-pattern-parser"
   flyway:
     baselineOnMigrate: true
-    locations: classpath:db/migration, classpath:db/callback
+    locations: classpath:db/migration #, classpath:db/callback
   h2:
     console:
       enabled: false

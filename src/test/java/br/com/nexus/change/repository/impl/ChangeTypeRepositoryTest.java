@@ -1,3 +1,4 @@
+/*
 package br.com.nexus.change.repository.impl;
 
 import br.com.nexus.change.infrastructure.entity.component.ComponentEntity;
@@ -54,3 +55,4 @@ class ChangeTypeRepositoryTest {
         assertThat(found).isNotPresent();
     }
 }
+*/

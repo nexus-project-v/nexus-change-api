@@ -45,7 +45,7 @@ public class ComponentResources {
         this.componentApiMapper = componentApiMapper;
     }
 
-    @Operation(summary = "Create a new Compoment", tags = {"productCategorys", "post"})
+    @Operation(summary = "Create a new Compoment", tags = {"components", "post"})
     @ApiResponse(responseCode = "201", content = {
             @Content(schema = @Schema(implementation = ComponentResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
@@ -56,7 +56,7 @@ public class ComponentResources {
         ChangeComponent productCategory = componentApiMapper.fromRequest(request);
         ChangeComponent saved = createCompomentPort.save(productCategory);
         if (saved == null) {
-            throw new ResourceFoundException("Produto não encontroado ao cadastrar");
+            throw new ResourceFoundException("Compoment não encontroado ao cadastrar");
         }
 
         ComponentResponse productCategoryResponse = componentApiMapper.fromEntity(saved);
@@ -64,7 +64,7 @@ public class ComponentResources {
         return ResponseEntity.created(location).body(productCategoryResponse);
     }
 
-    @Operation(summary = "Update a Compoment by Id", tags = {"productCategorys", "put"})
+    @Operation(summary = "Update a Compoment by Id", tags = {"components", "put"})
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = ComponentResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
@@ -83,7 +83,7 @@ public class ComponentResources {
         return ResponseEntity.ok(productCategoryResponse);
     }
 
-    @Operation(summary = "Retrieve all Compoment", tags = {"productCategorys", "get", "filter"})
+    @Operation(summary = "Retrieve all Compoment", tags = {"components", "get", "filter"})
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = ComponentResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "204", description = "There are no Associations", content = {
@@ -102,7 +102,7 @@ public class ComponentResources {
     @Operation(
             summary = "Retrieve a Compoment by Id",
             description = "Get a Compoment object by specifying its id. The response is Association object with id, title, description and published status.",
-            tags = {"productCategorys", "get"})
+            tags = {"components", "get"})
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = ComponentResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
@@ -118,7 +118,7 @@ public class ComponentResources {
         return ResponseEntity.ok(productCategoryResponse);
     }
 
-    @Operation(summary = "Delete a Compoment by Id", tags = {"productCategorytrus", "delete"})
+    @Operation(summary = "Delete a Compoment by Id", tags = {"components", "delete"})
     @ApiResponse(responseCode = "204", content = {@Content(schema = @Schema())})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
     @DeleteMapping(path = "/{id}")

@@ -1,5 +1,6 @@
 package br.com.nexus.change.application.api.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -30,11 +32,15 @@ public class ScheduledWindowRequest implements Serializable {
     @Schema(description = "start of the Change.",
             example = "Janela de Manutenção")
     @NotNull(message = "o campo \"start\" é obrigario")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
     private LocalDateTime start;
 
     @Schema(description = "end of the Change.",
             example = "Janela de Manutenção")
     @NotNull(message = "o campo \"end\" é obrigario")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
     private LocalDateTime end;
 
     @Schema(description = "Change Id for the Window.",

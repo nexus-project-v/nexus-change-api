@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 @OpenAPIDefinition(
         info = @Info(
                 contact = @Contact(
-                        name = "SelectGearMotors Transaction API",
+                        name = "Nexus Change API",
                         email = "contact@nexus.com.br",
                         url = "https://nexus.com.br"
                 ),
@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
                 version = "1.0",
                 license = @License(
                         name = "Licence name",
-                        url = "https://some-url.com"
+                        url = "https://www.nexus.com.br"
                 ),
                 termsOfService = "Terms of service"
         ),

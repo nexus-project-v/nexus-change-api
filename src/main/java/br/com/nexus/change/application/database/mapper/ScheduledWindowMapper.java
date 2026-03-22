@@ -14,7 +14,7 @@ public interface ScheduledWindowMapper {
     @Mapping(source = "responsible", target = "responsible")
     @Mapping(source = "start", target = "start")
     @Mapping(source = "end", target = "end")
-    @Mapping(source = "changeId", target = "change.id")
+    @Mapping(source = "changeId", target = "changeEntity.id")
     ScheduledWindowEntity fromModelTpEntity(ScheduledWindow scheduledWindow);
 
     @InheritInverseConfiguration

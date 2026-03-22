@@ -12,6 +12,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ChangeApiMapper {
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(source = "title", target = "title")
     @Mapping(source = "description", target = "description")
     @Mapping(source = "componentId", target = "componentId")

@@ -45,7 +45,7 @@ public class ScheduledWindowResources {
         this.scheduleWindowApiMapper = scheduleWindowApiMapper;
     }
 
-    @Operation(summary = "Create a new Compoment", tags = {"productCategorys", "post"})
+    @Operation(summary = "Create a new ScheduleWindow", tags = {"scheduleWindows", "post"})
     @ApiResponse(responseCode = "201", content = {
             @Content(schema = @Schema(implementation = ScheduledWindowResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
@@ -56,7 +56,7 @@ public class ScheduledWindowResources {
         ScheduledWindow productCategory = scheduleWindowApiMapper.fromRequest(request);
         ScheduledWindow saved = createScheduledWindowPort.save(productCategory);
         if (saved == null) {
-            throw new ResourceFoundException("Produto não encontroado ao cadastrar");
+            throw new ResourceFoundException("Schedule não encontroado ao cadastrar");
         }
 
         ScheduledWindowResponse productCategoryResponse = scheduleWindowApiMapper.fromEntity(saved);
@@ -64,7 +64,7 @@ public class ScheduledWindowResources {
         return ResponseEntity.created(location).body(productCategoryResponse);
     }
 
-    @Operation(summary = "Update a Compoment by Id", tags = {"productCategorys", "put"})
+    @Operation(summary = "Update a ScheduleWindow by Id", tags = {"ScheduleWindow", "put"})
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = ScheduledWindowResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
@@ -76,14 +76,14 @@ public class ScheduledWindowResources {
         var productCategory = scheduleWindowApiMapper.fromRequest(request);
         ScheduledWindow updated = updateScheduledWindowPort.update(id, productCategory);
         if (updated == null) {
-            throw new ResourceFoundException("\"Produto não encontroado ao atualizar");
+            throw new ResourceFoundException("\"ScheduleWindow não encontroado ao atualizar");
         }
 
         ScheduledWindowResponse productCategoryResponse = scheduleWindowApiMapper.fromEntity(updated);
         return ResponseEntity.ok(productCategoryResponse);
     }
 
-    @Operation(summary = "Retrieve all Compoment", tags = {"productCategorys", "get", "filter"})
+    @Operation(summary = "Retrieve all ScheduleWindow", tags = {"ScheduleWindow", "get", "filter"})
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = ScheduledWindowResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "204", description = "There are no Associations", content = {
@@ -102,7 +102,7 @@ public class ScheduledWindowResources {
     @Operation(
             summary = "Retrieve a Compoment by Id",
             description = "Get a Compoment object by specifying its id. The response is Association object with id, title, description and published status.",
-            tags = {"productCategorys", "get"})
+            tags = {"scheduleWindows", "get"})
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = ScheduledWindowResources.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
@@ -111,14 +111,14 @@ public class ScheduledWindowResources {
     public ResponseEntity<ScheduledWindowResponse> findOne(@PathVariable("id") UUID id) {
         ScheduledWindow productCategorySaved = findByIdScheduledWindowPort.findById(id);
         if (productCategorySaved == null) {
-            throw new ResourceFoundException("Produto não encontrado ao buscar por código");
+            throw new ResourceFoundException("ScheduleWindow não encontrado ao buscar por código");
         }
 
         ScheduledWindowResponse productCategoryResponse = scheduleWindowApiMapper.fromEntity(productCategorySaved);
         return ResponseEntity.ok(productCategoryResponse);
     }
 
-    @Operation(summary = "Delete a Compoment by Id", tags = {"productCategorytrus", "delete"})
+    @Operation(summary = "Delete a Compoment by Id", tags = {"ScheduleWindow", "delete"})
     @ApiResponse(responseCode = "204", content = {@Content(schema = @Schema())})
     @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
     @DeleteMapping(path = "/{id}")

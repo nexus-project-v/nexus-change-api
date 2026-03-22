@@ -12,8 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ScheduleWindowApiMapper {
 
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "version", target = "version")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "responsible", target = "responsible")
+    @Mapping(source = "start", target = "start")
+    @Mapping(source = "end", target = "end")
+    @Mapping(source = "changeId", target = "changeId")
     ScheduledWindow fromRequest(ScheduledWindowRequest request);
 
     @InheritInverseConfiguration
