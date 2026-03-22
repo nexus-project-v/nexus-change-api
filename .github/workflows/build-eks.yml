@@ -1,0 +1,88 @@
+name: CI/CD para AWS EKS
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.2.0
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: rogeriofontes/nexus-transaction-api:v8
+
+      - name: Configure kubectl
+        run: |
+          aws eks --region us-east-1 update-kubeconfig --name nexus-eks-cluster
+
+      - name: Create Kubernetes Secret YAML
+        run: |
+          cat <<EOF > infra/k8s/secrets.yaml
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: nexus-transaction-api-secrets
+            namespace: nexus-ns
+          type: Opaque
+          stringData:
+            API_GATEWAY_CAR_SELLER_URL: "${{ secrets.API_GATEWAY_CAR_SELLER_URL }}"
+            API_GATEWAY_CLIENT_URL: "${{ secrets.API_GATEWAY_CLIENT_URL }}"
+            API_GATEWAY_PAYMENT_URL: "${{ secrets.API_GATEWAY_PAYMENT_URL }}"
+            API_GATEWAY_VEHICLE_URL: "${{ secrets.API_GATEWAY_VEHICLE_URL }}"
+            API_PORT: "${{ secrets.API_PORT }}"
+            AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+            AWS_REGION: "${{ secrets.AWS_REGION }}"
+            AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+            AWS_SQS_QUEUE_DOCUMENT_URL: "${{ secrets.AWS_SQS_QUEUE_DOCUMENT_URL }}"
+            AWS_SQS_QUEUE_NOTIFICATION_URL: "${{ secrets.AWS_SQS_QUEUE_NOTIFICATION_URL }}"
+            DATABASE_PASSWORD: "${{ secrets.DATABASE_PASSWORD }}"
+            DATABASE_URL: "${{ secrets.DATABASE_URL }}"
+            #DATABASE_URL: "${{ secrets.DATABASE_URL }}"
+            DATABASE_USERNAME: "${{ secrets.DATABASE_USERNAME }}"
+            MAIL_HOST: "${{ secrets.MAIL_HOST }}"
+            MAIL_PASSWORD: "${{ secrets.MAIL_PASSWORD }}"
+            MAIL_PORT: "${{ secrets.MAIL_PORT }}"
+            MAIL_USERNAME: "${{ secrets.MAIL_USERNAME }}"
+            SECURITY_JWT_SECRET_KEY: "${{ secrets.SECURITY_JWT_SECRET_KEY }}"
+            SWAGGER_API_URL: "${{ secrets.SWAGGER_API_URL }}"
+            ZIPKIN_URL: "${{ secrets.ZIPKIN_URL }}"
+          EOF
+
+      - name: Apply ConfigMap and Secrets
+        run: |
+          kubectl apply -f infra/k8s/configmap.yaml
+          kubectl apply -f infra/k8s/secrets.yaml
+
+      - name: Apply Kubernetes Service
+        run: |
+          kubectl apply -f infra/k8s/service.yaml -n nexus-ns
+
+      - name: Deploy API to EKS Cluster
+        run: |
+          kubectl apply -f infra/k8s/deployment.yaml -n nexus-ns

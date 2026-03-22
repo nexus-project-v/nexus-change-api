@@ -1,0 +1,217 @@
+server:
+  port: 9933
+  servlet:
+    context-path: /api
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: nexus-transaction-api
+  main:
+    allow-circular-references: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  main:
+    allow-circular-references: true
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    connectionTimeout: 30000
+    idleTimeout: 30000
+    max-open-prepared-statements: 250
+    maxLifetime: 2000000
+    maximumPoolSize: 5
+    minimumIdle: 3
+    pool-prepared-statements: true
+    poolName: SpringBootHikariCP
+    hikari:
+      connection-timeout: '60000'
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  mvc:
+    pathmatch:
+      matching-strategy: "path-pattern-parser"
+  flyway:
+    baselineOnMigrate: true
+    locations: classpath:db/migration, classpath:db/callback
+  h2:
+    console:
+      enabled: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  payment:
+    provider: ${PAYMENT_PROVIDER:provider-local}
+swagger:
+  api:
+    url: ${SWAGGER_API_URL}
+logging:
+  pattern:
+    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+management:
+  tracing:
+    baggage:
+      enabled: true
+    enabled: true
+    propagation:
+      type: 'W3C'
+    sampling:
+      probability: 1.0 # para enviar 100% da amostra'
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL}
+  #security:
+  #  oauth2:
+  #    client:
+  #      provider:
+  #        cognito:
+  #          issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_lLiNIC87U
+  #      registration:
+  #        cognito:
+  #          client-id: ${AWS_COGNITO_CLIENT_ID}
+  #          client-secret: ${AWS_COGNITO_CLIENT_SECRET}
+  #          scope: openid
+#application:
+#  security:
+#    jwt:
+#      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+#      expiration: 864000000 # 10 day
+#      refresh-token:
+#        expiration: 6048000000 # 70 days
+#cognito:
+#  user-pool-id: us-east-1_lLiNIC87U
+gateway:
+  client:
+    url: ${API_GATEWAY_CLIENT_URL}
+  company:
+    url: ${API_GATEWAY_COMPANY_URL}
+  seller:
+    url: ${API_GATEWAY_SELLER_URL}
+  product:
+    url: ${API_GATEWAY_PRODUCT_URL}
+  inventory:
+    url: ${API_GATEWAY_INVENTORY_URL}
+  payment:
+    url: ${API_GATEWAY_PAYMENT_URL}
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  main:
+    allow-circular-references: true
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    connectionTimeout: 30000
+    idleTimeout: 30000
+    max-open-prepared-statements: 250
+    maxLifetime: 2000000
+    maximumPoolSize: 5
+    minimumIdle: 3
+    pool-prepared-statements: true
+    poolName: SpringBootHikariCP
+    hikari:
+      connection-timeout: '60000'
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  mvc:
+    pathmatch:
+      matching-strategy: "path-pattern-parser"
+  flyway:
+    baselineOnMigrate: true
+    locations: classpath:db/migration, classpath:db/callback
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
+    region:
+      static: us-east-1
+  h2:
+    console:
+      enabled: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  payment:
+    provider: ${PAYMENT_PROVIDER:provider-local}
+swagger:
+  api:
+    url: ${SWAGGER_API_URL}
+logging:
+  pattern:
+    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+management:
+  tracing:
+    baggage:
+      enabled: true
+    enabled: true
+    propagation:
+      type: 'W3C'
+    sampling:
+      probability: 1.0 # para enviar 100% da amostra'
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL}
+  #security:
+  #  oauth2:
+  #    client:
+  #      provider:
+  #        cognito:
+  #          issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_lLiNIC87U
+  #      registration:
+  #        cognito:
+  #          client-id: ${AWS_COGNITO_CLIENT_ID}
+  #          client-secret: ${AWS_COGNITO_CLIENT_SECRET}
+  #          scope: openid
+#application:
+#  security:
+#    jwt:
+#      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+#      expiration: 864000000 # 10 day
+#      refresh-token:
+#        expiration: 6048000000 # 70 days
+#cognito:
+#  user-pool-id: us-east-1_lLiNIC87U
+gateway:
+  client:
+    url: ${API_GATEWAY_CLIENT_URL}
+  company:
+    url: ${API_GATEWAY_COMPANY_URL}
+  seller:
+    url: ${API_GATEWAY_SELLER_URL}
+  product:
+    url: ${API_GATEWAY_PRODUCT_URL}
+  inventory:
+    url: ${API_GATEWAY_INVENTORY_URL}
+  payment:
+    url: ${API_GATEWAY_PAYMENT_URL}
