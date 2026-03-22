@@ -6,6 +6,7 @@ create table change.tb_change
     component_id        UUID                                        not null,
     environment         varchar(255)                                not null,
     change_type         varchar(60)                                 not null,
+    change_status       varchar(60)                                 not null,
     request_by          varchar(255)                                not null,
     create_by           varchar(255)                                not null,
     created_date        timestamp(6)                                not null,

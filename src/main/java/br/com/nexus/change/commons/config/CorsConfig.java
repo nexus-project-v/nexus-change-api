@@ -17,10 +17,10 @@ public class CorsConfig {
 
         // ajuste se for usar cookies; se usar cookies, deve ser true
         // se o front usa `withCredentials = true` a resposta precisa conter Access-Control-Allow-Credentials: true
-        cfg.setAllowCredentials(true);
+        cfg.setAllowCredentials(false);
 
         // Permita seus fronts locais de desenvolvimento
-        cfg.setAllowedOriginPatterns(List.of("http://localhost:*"));
+        cfg.setAllowedOriginPatterns(List.of("*"));
 
         // alternativa: use allowed origin patterns (útil quando a porta pode mudar)
         // cfg.setAllowedOriginPatterns(List.of("http://localhost:*"));

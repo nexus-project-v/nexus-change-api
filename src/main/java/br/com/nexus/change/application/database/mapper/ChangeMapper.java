@@ -16,6 +16,7 @@ public interface ChangeMapper {
     @Mapping(source = "componentId", target = "componentEntity.id")
     @Mapping(source = "environment", target = "environment")
     @Mapping(source = "changeType", target = "changeType")
+    @Mapping(source = "changeStatus", target = "changeStatus")
     @Mapping(source = "requestBy", target = "requestBy")
     ChangeEntity fromModelTpEntity(Change change);
 

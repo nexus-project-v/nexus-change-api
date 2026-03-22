@@ -13,4 +13,5 @@ public class ChangePreparedPayload {
     private String componentVersion;
     private String environment;
     private String changeType;
+    private String changeStatus;
 }

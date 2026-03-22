@@ -28,7 +28,12 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/v1/changes")
-@CrossOrigin(origins = "*", allowedHeaders = "Content-Type, Authorization", maxAge = 3600)
+@CrossOrigin(
+        origins = "*",
+        allowedHeaders = "*",
+        methods = {RequestMethod.OPTIONS, RequestMethod.PATCH, RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
+        maxAge = 3600
+)
 public class ChangeResources {
 
     private final DeleteChangePort deleteChangePort;
@@ -127,6 +132,25 @@ public class ChangeResources {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ChangeResponse> findOne(@PathVariable("id") UUID id) {
+        Change changeSaved = findByIdChangePort.findById(id);
+        if (changeSaved == null) {
+            throw new ResourceFoundException("Changes não encontrado ao buscar por id");
+        }
+
+        ChangeResponse transactionResponse = changeApiMapper.fromEntity(changeSaved);
+        return ResponseEntity.ok(transactionResponse);
+    }
+
+    @Operation(
+            summary = "Retrieve a Change by Id",
+            description = "Get a Change object by specifying its id. The response is Association object with id, title, description and published status.",
+            tags = {"changes", "get"})
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = ChangeResources.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())})
+    @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
+    @GetMapping("/{id}/status")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<ChangeResponse> findByStatus(@PathVariable("id") UUID id) {
         Change changeSaved = findByIdChangePort.findById(id);
         if (changeSaved == null) {
             throw new ResourceFoundException("Changes não encontrado ao buscar por id");

@@ -25,7 +25,12 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/v1/components")
-@CrossOrigin(origins = "*", allowedHeaders = "Content-Type, Authorization", maxAge = 3600)
+@CrossOrigin(
+        origins = "*",
+        allowedHeaders = "*",
+        methods = {RequestMethod.OPTIONS, RequestMethod.PATCH, RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
+        maxAge = 3600
+)
 public class ComponentResources {
 
     private final CreateComponentPort createCompomentPort;

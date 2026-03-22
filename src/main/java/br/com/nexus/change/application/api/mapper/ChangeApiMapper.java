@@ -18,6 +18,7 @@ public interface ChangeApiMapper {
     @Mapping(source = "componentId", target = "componentId")
     @Mapping(source = "environment", target = "environment")
     @Mapping(source = "changeType", target = "changeType")
+    @Mapping(source = "changeStatus", target = "changeStatus")
     @Mapping(source = "requestBy", target = "requestBy")
     Change fromRequest(ChangeRequest request);
 
@@ -28,6 +29,7 @@ public interface ChangeApiMapper {
     @Mapping(source = "componentId", target = "componentId")
     @Mapping(source = "environment", target = "environment")
     @Mapping(source = "changeType", target = "changeType")
+    @Mapping(source = "changeStatus", target = "changeStatus")
     @Mapping(source = "requestBy", target = "requestBy")
     ChangeResponse fromEntity(Change change);
 

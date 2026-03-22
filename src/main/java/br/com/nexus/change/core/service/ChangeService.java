@@ -7,6 +7,7 @@ import br.com.nexus.change.core.domain.component.ChangeComponent;
 import br.com.nexus.change.core.ports.in.change.*;
 import br.com.nexus.change.core.ports.out.ChangeRepositoryPort;
 import br.com.nexus.change.core.ports.out.event.ChangeEventPublisher;
+import br.com.nexus.change.infrastructure.entity.change.ChangeStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class ChangeService implements CreateChangePort, UpdateChangePort, FindBy
 
     @Override
     public Change save(Change change) {
+        if (change.getChangeStatus() == null || change.getChangeStatus().isEmpty()) {
+            change.setChangeStatus(ChangeStatus.DRAFT.name());
+        }
         Change saved = changeRepository.save(change);
         if (saved != null) {
             ChangeComponent byId = componentService.findById(saved.getComponentId());
@@ -40,6 +44,7 @@ public class ChangeService implements CreateChangePort, UpdateChangePort, FindBy
                     .componentVersion(byId.getVersion())
                     .environment(saved.getEnvironment())
                     .changeType(saved.getChangeType())
+                    .changeStatus(saved.getChangeStatus())
                     .build();
             changeEventPublisher.publish(payload);
             return saved;

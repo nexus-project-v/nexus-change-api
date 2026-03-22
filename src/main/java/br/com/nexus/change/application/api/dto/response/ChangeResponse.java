@@ -43,6 +43,9 @@ public class ChangeResponse implements Serializable {
     @Schema(description = "ChangeType of Change", ref = "ChangeType")
     private String changeType;
 
+    @Schema(description = "ChangeStatus of Change")
+    private String changeStatus;
+
     @Schema(description = "Restaurant of the User.",
             example = "1", ref = "TransactionStatus")
     @NotNull
