@@ -16,18 +16,16 @@ import java.util.UUID;
 @Service
 public class ComponentService implements CreateComponentPort, UpdateComponentPort, FindByIdComponentsPort, FindComponentPort, DeleteComponentPort {
 
-    private final ComponentRepositoryPort transactionRepository;
-    private final ComponentRepositoryPort transactionStatusRepository;
+    private final ComponentRepositoryPort componentRepositoryPort;
 
     @Autowired
-    public ComponentService(ComponentRepositoryPort transactionRepository, ComponentRepositoryPort transactionStatusRepository) {
-        this.transactionRepository = transactionRepository;
-        this.transactionStatusRepository = transactionStatusRepository;
+    public ComponentService(ComponentRepositoryPort componentRepositoryPort) {
+        this.componentRepositoryPort = componentRepositoryPort;
     }
 
     @Override
     public ChangeComponent save(ChangeComponent transactionStatus) {
-        return transactionStatusRepository.save(transactionStatus);
+        return componentRepositoryPort.save(transactionStatus);
     }
 
     @Override
@@ -36,7 +34,7 @@ public class ComponentService implements CreateComponentPort, UpdateComponentPor
         if (resultById != null) {
             resultById.update(id, transactionStatus);
 
-            return transactionStatusRepository.save(resultById);
+            return componentRepositoryPort.save(resultById);
         }
 
         return null;
@@ -44,13 +42,13 @@ public class ComponentService implements CreateComponentPort, UpdateComponentPor
 
     @Override
     public ChangeComponent findById(UUID id) {
-        return transactionStatusRepository.findById(id);
+        return componentRepositoryPort.findById(id);
     }
 
     @Override
     public List<ChangeComponent> findAll() {
         try {
-            return transactionStatusRepository.findAll();
+            return componentRepositoryPort.findAll();
         } catch (Exception e) {
             log.error("Erro ao buscar produtos: {}", e.getMessage());
         }
@@ -66,7 +64,7 @@ public class ComponentService implements CreateComponentPort, UpdateComponentPor
                 throw new ResourceFoundException("Component not found");
             }
 
-            transactionRepository.remove(id);
+            componentRepositoryPort.remove(id);
             return Boolean.TRUE;
         } catch (ResourceFoundException e) {
             log.error("Erro ao remover produto: {}", e.getMessage());

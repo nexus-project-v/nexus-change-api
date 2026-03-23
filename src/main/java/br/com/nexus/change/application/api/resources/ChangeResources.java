@@ -151,7 +151,7 @@ public class ChangeResources {
     @GetMapping("/{id}/status")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ChangeResponse> findByStatus(@PathVariable("id") UUID id) {
-        Change changeSaved = findByIdChangePort.findById(id);
+        Change changeSaved = findByIdChangePort.findByStatus(id);
         if (changeSaved == null) {
             throw new ResourceFoundException("Changes não encontrado ao buscar por id");
         }

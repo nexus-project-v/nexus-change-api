@@ -12,9 +12,9 @@ docker rmi $(docker images -qa) -f
 ./mvnw clean install test jacoco:report
 sudo sysctl -w vm.max_map_count=262144
 
-docker build --network=host -t rogeriofontes/nexus-change-api:v0.0.5 .
+docker build --network=host -t rogeriofontes/nexus-change-api:v0.0.6 .
 docker login
-docker push rogeriofontes/nexus-change-api:v0.0.5
+docker push rogeriofontes/nexus-change-api:v0.0.6
 
 
 

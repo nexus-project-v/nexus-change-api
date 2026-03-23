@@ -3,8 +3,10 @@ package br.com.nexus.change.core.service;
 import br.com.nexus.change.application.event.dto.ChangePreparedPayload;
 import br.com.nexus.change.commons.exception.ResourceFoundException;
 import br.com.nexus.change.core.domain.change.Change;
+import br.com.nexus.change.core.domain.change.ChangeLog;
 import br.com.nexus.change.core.domain.component.ChangeComponent;
 import br.com.nexus.change.core.ports.in.change.*;
+import br.com.nexus.change.core.ports.out.ChangeLogRepositoryPort;
 import br.com.nexus.change.core.ports.out.ChangeRepositoryPort;
 import br.com.nexus.change.core.ports.out.event.ChangeEventPublisher;
 import br.com.nexus.change.infrastructure.entity.change.ChangeStatus;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,13 +22,15 @@ import java.util.UUID;
 @Service
 public class ChangeService implements CreateChangePort, UpdateChangePort, FindByIdChangePort, FindChangesPort, DeleteChangePort {
 
-    private final ChangeRepositoryPort changeRepository;
+    private final ChangeRepositoryPort changeRepositoryPort;
+    private final ChangeLogRepositoryPort changeLogRepositoryPort;
     private final ChangeEventPublisher changeEventPublisher;
     private final ComponentService componentService;
 
     @Autowired
-    public ChangeService(ChangeRepositoryPort changeRepository, ChangeEventPublisher changeEventPublisher, ComponentService componentService) {
-        this.changeRepository = changeRepository;
+    public ChangeService(ChangeRepositoryPort changeRepositoryPort, ChangeLogRepositoryPort changeLogRepositoryPort, ChangeEventPublisher changeEventPublisher, ComponentService componentService) {
+        this.changeRepositoryPort = changeRepositoryPort;
+        this.changeLogRepositoryPort = changeLogRepositoryPort;
         this.changeEventPublisher = changeEventPublisher;
         this.componentService = componentService;
     }
@@ -35,7 +40,7 @@ public class ChangeService implements CreateChangePort, UpdateChangePort, FindBy
         if (change.getChangeStatus() == null || change.getChangeStatus().isEmpty()) {
             change.setChangeStatus(ChangeStatus.DRAFT.name());
         }
-        Change saved = changeRepository.save(change);
+        Change saved = changeRepositoryPort.save(change);
         if (saved != null) {
             ChangeComponent byId = componentService.findById(saved.getComponentId());
             ChangePreparedPayload payload = ChangePreparedPayload.builder()
@@ -47,6 +52,7 @@ public class ChangeService implements CreateChangePort, UpdateChangePort, FindBy
                     .changeStatus(saved.getChangeStatus())
                     .build();
             changeEventPublisher.publish(payload);
+            createChangeLog(saved);
             return saved;
         }
         return null;
@@ -58,8 +64,9 @@ public class ChangeService implements CreateChangePort, UpdateChangePort, FindBy
         if (resultById != null) {
             resultById.update(id, change);
 
-            return changeRepository.save(resultById);
+            return changeRepositoryPort.save(resultById);
         }
+
 
         return null;
     }
@@ -99,12 +106,17 @@ public class ChangeService implements CreateChangePort, UpdateChangePort, FindBy
 
     @Override
     public Change findById(UUID id) {
-        return changeRepository.findById(id);
+        return changeRepositoryPort.findById(id);
+    }
+
+    @Override
+    public Change findByStatus(UUID id) {
+        return changeLogRepositoryPort.findByChangeId(id);
     }
 
     @Override
     public List<Change> findAll() {
-        return changeRepository.findAll();
+        return changeRepositoryPort.findAll();
     }
 
     @Override
@@ -114,7 +126,19 @@ public class ChangeService implements CreateChangePort, UpdateChangePort, FindBy
             throw new ResourceFoundException("Change not found");
         }
 
-        changeRepository.remove(id);
+        changeRepositoryPort.remove(id);
         return Boolean.TRUE;
+    }
+
+    private void createChangeLog(Change saved) {
+        ChangeLog build = ChangeLog.builder()
+                .changeId(saved.getId())
+                .changeStatus(saved.getChangeStatus())
+                .build();
+        changeLogRepositoryPort.save(build);
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }

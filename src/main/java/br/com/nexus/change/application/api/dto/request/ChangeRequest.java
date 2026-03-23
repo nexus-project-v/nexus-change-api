@@ -2,6 +2,7 @@ package br.com.nexus.change.application.api.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ public class ChangeRequest implements Serializable {
 
     @Schema(description = "title of the Change.",
             example = "Atualização cluster Kubernetes")
-    @NotNull(message = "o campo \"title\" é obrigario")
+    @NotBlank(message = "o campo \"title\" é obrigario")
     @Size(min = 3, max = 255)
     private String title;
 
@@ -31,12 +32,15 @@ public class ChangeRequest implements Serializable {
     private String description;
 
     @Schema(description = "Component of Change", ref = "Component")
+    @NotNull(message = "o campo \"componentId\" é obrigario")
     private UUID componentId;
 
     @Schema(description = "Ambiente da Change", example = "PROD")
+    @NotBlank(message = "o campo \"environment\" é obrigario")
     private String environment;
 
     @Schema(description = "ChangeType of Change", ref = "ChangeType")
+    @NotBlank(message = "o campo \"changeType\" é obrigario")
     private String changeType;
 
     @Schema(description = "ChangeStatus of Change")
@@ -44,7 +48,7 @@ public class ChangeRequest implements Serializable {
 
     @Schema(description = "Restaurant of the User.",
             example = "1", ref = "TransactionStatus")
-    @NotNull
+    @NotBlank(message = "o campo \"requestBy\" é obrigario")
     private String requestBy;
 }
 

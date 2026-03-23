@@ -6,4 +6,6 @@ import java.util.UUID;
 
 public interface FindByIdChangePort {
     Change findById(UUID id);
+
+    Change findByStatus(UUID id);
 }

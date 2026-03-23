@@ -1,11 +1,7 @@
 package br.com.nexus.change.core.domain.change;
 
-import br.com.nexus.change.infrastructure.entity.change.ChangeStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
