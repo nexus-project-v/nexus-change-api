@@ -1,208 +1,195 @@
-/*
 package br.com.nexus.change.repository;
 
-import br.com.nexus.change.infrastructure.entity.change.TransactionEntity;
+import br.com.nexus.change.infrastructure.entity.change.ChangeEntity;
+import br.com.nexus.change.infrastructure.entity.change.ChangeStatus;
+import br.com.nexus.change.infrastructure.entity.change.ChangeType;
+import br.com.nexus.change.infrastructure.entity.change.Environment;
 import br.com.nexus.change.infrastructure.entity.component.ComponentEntity;
-import br.com.nexus.change.infrastructure.repository.TransactionRepository;
-import br.com.nexus.change.infrastructure.repository.TransactionTypeRepository;
-import com.github.javafaker.Faker;
+import br.com.nexus.change.infrastructure.repository.ChangeRepository;
+import br.com.nexus.change.infrastructure.repository.ComponentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.TestPropertySource;
 
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @DataJpaTest
 @ImportAutoConfiguration(exclude = FlywayAutoConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource("classpath:application-test.properties")
+@DisplayName("ChangeRepository tests")
 class ChangeRepositoryTest {
 
     @Autowired
-    private TransactionRepository productRepository;
+    private ChangeRepository changeRepository;
 
     @Autowired
-    private TransactionTypeRepository transactionTypeRepository;
-
-    private ComponentEntity componentEntity;
-
-    private Faker faker = new Faker();
+    private ComponentRepository componentRepository;
 
     @BeforeEach
     void setUp() {
         log.info("Cleaning up database...");
-        productRepository.deleteAll();
-        transactionTypeRepository.deleteAll();
-
-        log.info("Setting up test data...");
-        this.componentEntity = transactionTypeRepository.save(getTransactionType());
-
-        TransactionEntity product = productRepository.save(getTransaction(this.componentEntity));
-        log.info("TransactionEntity:{}", product);
+        changeRepository.deleteAll();
+        componentRepository.deleteAll();
     }
 
-    private TransactionEntity getTransaction(ComponentEntity componentEntity) {
-        return TransactionEntity.builder()
-                .code(UUID.randomUUID().toString())
-                .transactionType(componentEntity)
-                .clientId(UUID.randomUUID())
+    // -------------------------------------------------------------------------
+    // Factory helpers
+    // -------------------------------------------------------------------------
+
+    private ChangeEntity buildChange(String title) {
+        return ChangeEntity.builder()
+                .title(title)
+                .description("Descrição de " + title)
+                .environment(Environment.PROD)
+                .changeType(ChangeType.NORMAL)
+                .changeStatus(ChangeStatus.DRAFT)
+                .requestBy("user@nexus.com")
                 .build();
     }
 
-    private TransactionEntity getTransaction1(ComponentEntity componentEntity) {
-        return TransactionEntity.builder()
-                .code(UUID.randomUUID().toString())
-                .transactionType(componentEntity)
-                .clientId(UUID.randomUUID())
-                .build();
-    }
-
-    private TransactionEntity getTransaction2(ComponentEntity componentEntity) {
-        return TransactionEntity.builder()
-                .code(UUID.randomUUID().toString())
-                .transactionType(componentEntity)
-                .clientId(UUID.randomUUID())
-                .build();
-    }
-
-    private ComponentEntity getTransactionType() {
+    private ComponentEntity buildComponent() {
         return ComponentEntity.builder()
-                .name(faker.food().ingredient())
+                .id(UUID.randomUUID())
+                .name("infra-cluster-eks")
+                .version("1.29")
                 .build();
     }
 
-    @Disabled
-    void should_find_no_products_if_repository_is_empty() {
-        Iterable<TransactionEntity> products = productRepository.findAll();
-        products = Collections.EMPTY_LIST;
-        assertThat(products).isEmpty();
+    // -------------------------------------------------------------------------
+    // Tests
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Should save a change without component")
+    void should_save_change_without_component() {
+        log.info("Test: should_save_change_without_component");
+
+        ChangeEntity saved = changeRepository.save(buildChange("Upgrade EKS"));
+
+        log.info("ChangeEntity saved: {}", saved);
+        assertNotNull(saved.getId());
+        assertThat(saved.getTitle()).isEqualTo("Upgrade EKS");
+        assertThat(saved.getChangeStatus()).isEqualTo(ChangeStatus.DRAFT);
+        assertThat(saved.getRequestBy()).isEqualTo("user@nexus.com");
     }
 
-    @Disabled
-    void should_store_a_product() {
-        log.info("Setting up test data...");
-        var productCategory1 = transactionTypeRepository.save(getTransactionType());
+    @Test
+    @DisplayName("Should save a change linked to a component")
+    void should_save_change_with_component() {
+        log.info("Test: should_save_change_with_component");
 
-        TransactionEntity product = getTransaction(productCategory1);
-        product.setCode(UUID.randomUUID().toString());
+        ComponentEntity component = componentRepository.save(buildComponent());
+        ChangeEntity change = buildChange("Atualização WAF");
+        change.setComponentEntity(component);
 
-        // Ensure unique code
-        TransactionEntity savedTransaction = productRepository.save(product);
+        ChangeEntity saved = changeRepository.save(change);
 
-        assertThat(savedTransaction).isNotNull();
-        assertThat(savedTransaction.getId()).isNotNull();
-        assertThat(savedTransaction.getCode()).isEqualTo(product.getCode());
+        log.info("ChangeEntity saved with component: {}", saved);
+        assertNotNull(saved.getId());
+        assertThat(saved.getComponentEntity()).isNotNull();
+        assertThat(saved.getComponentEntity().getName()).isEqualTo("infra-cluster-eks");
     }
 
-    @Disabled
-    void should_find_product_by_id() {
-        log.info("Setting up test data...");
-        var productCategory1 = transactionTypeRepository.save(getTransactionType());
+    @Test
+    @DisplayName("Should find change by id")
+    void should_find_change_by_id() {
+        log.info("Test: should_find_change_by_id");
 
-        TransactionEntity product = getTransaction(productCategory1);
-        product.setCode(UUID.randomUUID().toString());
+        ChangeEntity saved = changeRepository.save(buildChange("Rollout API v2"));
 
-        // Ensure unique code
-        TransactionEntity savedTransaction = productRepository.save(product);
+        Optional<ChangeEntity> found = changeRepository.findById(saved.getId());
 
-        Optional<TransactionEntity> foundTransaction = productRepository.findById(savedTransaction.getId());
-        assertThat(foundTransaction).isPresent();
-        assertThat(foundTransaction.get().getCode()).isEqualTo(savedTransaction.getCode());
+        log.info("ChangeEntity found: {}", found);
+        assertThat(found).isPresent();
+        assertThat(found.get().getTitle()).isEqualTo("Rollout API v2");
     }
 
-    @Disabled
-    void should_find_all_products() {
-        log.info("Cleaning up database...");
-        productRepository.deleteAll();
-        transactionTypeRepository.deleteAll();
+    @Test
+    @DisplayName("Should return empty optional when id not found")
+    void should_return_empty_when_id_not_found() {
+        log.info("Test: should_return_empty_when_id_not_found");
 
-        var productCategory1 = transactionTypeRepository.save(getTransactionType());
+        Optional<ChangeEntity> found = changeRepository.findById(UUID.randomUUID());
 
-        TransactionEntity product1 = productRepository.save(getTransaction(productCategory1));
-
-        Iterable<TransactionEntity> products = productRepository.findAll();
-        List<TransactionEntity> productList = new ArrayList<>();
-        products.forEach(productList::add);
-
-        assertThat(productList).hasSize(1);
-        assertThat(productList).extracting(TransactionEntity::getCode).contains(product1.getCode());
+        log.info("ChangeEntity found: {}", found);
+        assertThat(found).isEmpty();
     }
 
-    @Disabled
-    void should_delete_all_products() {
-        log.info("Cleaning up database...");
-        productRepository.deleteAll();
-        transactionTypeRepository.deleteAll();
+    @Test
+    @DisplayName("Should list all changes")
+    void should_find_all_changes() {
+        log.info("Test: should_find_all_changes");
 
-        var productCategory1 = transactionTypeRepository.save(getTransactionType());
+        changeRepository.save(buildChange("Deploy Backend"));
+        changeRepository.save(buildChange("Deploy Frontend"));
+        changeRepository.save(buildChange("Patch Banco"));
 
-        productRepository.save(getTransaction(productCategory1));
-        productRepository.deleteAll();
+        List<ChangeEntity> all = changeRepository.findAll();
 
-        Iterable<TransactionEntity> products = productRepository.findAll();
-        assertThat(products).isEmpty();
+        log.info("Total changes found: {}", all.size());
+        assertThat(all).hasSize(3);
     }
 
-    @Disabled
-    void whenInvalidId_thenReturnNull() {
-        log.info("Cleaning up database...");
-        TransactionEntity fromDb = productRepository.findById(UUID.randomUUID()).orElse(null);
-        assertThat(fromDb).isNull();
+    @Test
+    @DisplayName("Should update a change using applyChanges")
+    void should_update_change_with_apply_changes() {
+        log.info("Test: should_update_change_with_apply_changes");
+
+        ChangeEntity saved = changeRepository.save(buildChange("Change Original"));
+
+        ChangeEntity patch = buildChange("Change Atualizada");
+        patch.setChangeStatus(ChangeStatus.VALIDATED);
+        patch.setEnvironment(Environment.HOM);
+
+        saved.applyChanges(saved.getId(), patch);
+        ChangeEntity updated = changeRepository.save(saved);
+
+        log.info("ChangeEntity updated: {}", updated);
+        assertThat(updated.getTitle()).isEqualTo("Change Atualizada");
+        assertThat(updated.getChangeStatus()).isEqualTo(ChangeStatus.VALIDATED);
+        assertThat(updated.getEnvironment()).isEqualTo(Environment.HOM);
     }
 
-    @Disabled
-    void givenSetOfTransactions_whenFindAll_thenReturnAllTransactions() {
-        productRepository.deleteAll();
-        transactionTypeRepository.deleteAll();
+    @Test
+    @DisplayName("Should delete change by id")
+    void should_delete_change_by_id() {
+        log.info("Test: should_delete_change_by_id");
 
-        List<TransactionEntity> all = productRepository.findAll();
-        log.info(all.toString());
+        ChangeEntity saved = changeRepository.save(buildChange("Change para deletar"));
 
-        ComponentEntity productCategory1 = transactionTypeRepository.save(getTransactionType());
+        changeRepository.deleteById(saved.getId());
+        Optional<ChangeEntity> deleted = changeRepository.findById(saved.getId());
 
-        TransactionEntity product = getTransaction(productCategory1);
-        log.info("TransactionEntity:{}", product);
-        TransactionEntity product1 = productRepository.save(product);
-
-        Iterable<TransactionEntity> products = productRepository.findAll();
-        List<TransactionEntity> productList = new ArrayList<>();
-        products.forEach(productList::add);
-
-        assertThat(productList).hasSize(1);
-        //assertThat(productList).extracting(TransactionEntity::getName).contains(product1.getName(), product2.getName(), product3.getName());
+        log.info("ChangeEntity after delete: {}", deleted);
+        assertThat(deleted).isEmpty();
     }
 
-    @Disabled
-    void testSaveRestaurantWithLongName() {
-        TransactionEntity productEntity = new TransactionEntity();
-        productEntity.setCode(UUID.randomUUID().toString());
-        productEntity.setClientId(UUID.randomUUID());
-        productEntity.setPrice(BigDecimal.TEN);
-        productEntity.setTransactionType(this.componentEntity);
+    @Test
+    @DisplayName("Should count all changes in repository")
+    void should_count_all_changes() {
+        log.info("Test: should_count_all_changes");
 
-        assertThrows(DataIntegrityViolationException.class, () -> {
-            productRepository.save(productEntity);
-        });
-    }
+        changeRepository.save(buildChange("Change A"));
+        changeRepository.save(buildChange("Change B"));
 
-    private TransactionEntity createInvalidTransactionType() {
-        TransactionEntity productCategory = new TransactionEntity();
-        // Configurar o productCategory com valores inválidos
-        // Exemplo: valores inválidos que podem causar uma ConstraintViolationException
-        productCategory.setCode(""); // Nome vazio pode causar uma violação
-        return productCategory;
+        long count = changeRepository.count();
+
+        log.info("Total count: {}", count);
+        assertThat(count).isEqualTo(2L);
     }
 }
-*/
+

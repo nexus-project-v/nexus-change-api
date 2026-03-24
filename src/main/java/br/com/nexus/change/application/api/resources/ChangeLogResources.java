@@ -74,4 +74,22 @@ public class ChangeLogResources {
 
         return ResponseEntity.ok(changeLogList);
     }
+
+    @Operation(
+            summary = "Retrieve a Change by Id",
+            description = "Get a Change object by specifying its id. The response is Association object with id, title, description and published status.",
+            tags = {"changelogs", "get"})
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = ChangeLogResources.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())})
+    @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<ChangeLog>> findByQueryStatus(@RequestParam("changeId") UUID changeId) {
+        List<ChangeLog> changeLogList = findByIdChangeLogPort.findByStatus(changeId);
+        if (changeLogList == null) {
+            throw new ResourceFoundException("Changes não encontrado ao buscar por id");
+        }
+
+        return ResponseEntity.ok(changeLogList);
+    }
 }

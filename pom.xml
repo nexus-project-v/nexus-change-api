@@ -32,6 +32,7 @@
             src/main/java/br/com/nexus/change/application/database/mapper/**,
             src/main/java/br/com/nexus/change/commons/config/**,
             src/main/java/br/com/nexus/change/commons/util/**,
+            src/main/java/br/com/nexus/change/config/**,
             src/main/java/br/com/nexus/change/commons/exception/**,
             src/main/java/br/com/nexus/change/core/utils/**,
             src/main/java/br/com/nexus/change/core/ports/**,
@@ -47,6 +48,7 @@
             src/main/java/br/com/nexus/change/application/api/dto/**,
             src/main/java/br/com/nexus/change/application/api/mapper/**,
             src/main/java/br/com/nexus/change/application/database/mapper/**,
+            src/main/java/br/com/nexus/change/config/**,
             src/main/java/br/com/nexus/change/commons/config/**,
             src/main/java/br/com/nexus/change/commons/util/**,
             src/main/java/br/com/nexus/change/commons/exception/**,
@@ -188,14 +190,14 @@
             <artifactId>springdoc-openapi-security</artifactId>
             <version>1.6.14</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-otel</artifactId>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-exporter-otlp</artifactId>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-brave</artifactId>
