@@ -9,7 +9,6 @@ import br.com.nexus.change.commons.exception.ResourceFoundException;
 import br.com.nexus.change.commons.exception.SellerCodeFoundException;
 import br.com.nexus.change.commons.util.RestUtils;
 import br.com.nexus.change.core.domain.change.Change;
-import br.com.nexus.change.core.domain.change.ChangeLog;
 import br.com.nexus.change.core.ports.in.change.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

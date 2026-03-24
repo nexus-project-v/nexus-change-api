@@ -1,13 +1,9 @@
 package br.com.nexus.change.application.api.resources;
 
 import br.com.nexus.change.application.api.dto.response.ChangeLogResponse;
-import br.com.nexus.change.application.api.dto.response.ChangeResponse;
-import br.com.nexus.change.application.api.mapper.ChangeApiMapper;
 import br.com.nexus.change.application.api.mapper.ChangeLogApiMapper;
 import br.com.nexus.change.commons.exception.ResourceFoundException;
-import br.com.nexus.change.core.domain.change.Change;
 import br.com.nexus.change.core.domain.change.ChangeLog;
-import br.com.nexus.change.core.ports.in.change.FindByIdChangePort;
 import br.com.nexus.change.core.ports.in.changelog.FindByIdChangeLogPort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

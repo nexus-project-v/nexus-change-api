@@ -1,21 +1,15 @@
 package br.com.nexus.change.application.database.repository;
 
 import br.com.nexus.change.application.database.mapper.ChangeLogMapper;
-import br.com.nexus.change.application.database.mapper.ChangeMapper;
-import br.com.nexus.change.core.domain.change.Change;
 import br.com.nexus.change.core.domain.change.ChangeLog;
 import br.com.nexus.change.core.ports.out.ChangeLogRepositoryPort;
-import br.com.nexus.change.core.ports.out.ChangeRepositoryPort;
-import br.com.nexus.change.infrastructure.entity.change.ChangeEntity;
 import br.com.nexus.change.infrastructure.entity.change.ChangeLogEntity;
 import br.com.nexus.change.infrastructure.repository.ChangeLogRepository;
-import br.com.nexus.change.infrastructure.repository.ChangeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
