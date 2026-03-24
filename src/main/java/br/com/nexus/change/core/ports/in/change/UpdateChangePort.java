@@ -7,4 +7,6 @@ import java.util.UUID;
 public interface UpdateChangePort {
     Change update(UUID id, Change change);
     Change updateStatusById(UUID transactionId, String status);
+
+    Change updateStatus(UUID changeId, String changeStatus);
 }

@@ -9,6 +9,7 @@ import br.com.nexus.change.commons.exception.ResourceFoundException;
 import br.com.nexus.change.commons.exception.SellerCodeFoundException;
 import br.com.nexus.change.commons.util.RestUtils;
 import br.com.nexus.change.core.domain.change.Change;
+import br.com.nexus.change.core.domain.change.ChangeLog;
 import br.com.nexus.change.core.ports.in.change.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -133,25 +134,6 @@ public class ChangeResources {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ChangeResponse> findOne(@PathVariable("id") UUID id) {
         Change changeSaved = findByIdChangePort.findById(id);
-        if (changeSaved == null) {
-            throw new ResourceFoundException("Changes não encontrado ao buscar por id");
-        }
-
-        ChangeResponse transactionResponse = changeApiMapper.fromEntity(changeSaved);
-        return ResponseEntity.ok(transactionResponse);
-    }
-
-    @Operation(
-            summary = "Retrieve a Change by Id",
-            description = "Get a Change object by specifying its id. The response is Association object with id, title, description and published status.",
-            tags = {"changes", "get"})
-    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = ChangeResources.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())})
-    @ApiResponse(responseCode = "500", content = {@Content(schema = @Schema())})
-    @GetMapping("/{id}/status")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ChangeResponse> findByStatus(@PathVariable("id") UUID id) {
-        Change changeSaved = findByIdChangePort.findByStatus(id);
         if (changeSaved == null) {
             throw new ResourceFoundException("Changes não encontrado ao buscar por id");
         }

@@ -42,10 +42,14 @@ public class ChangeLogRepositoryAdapter implements ChangeLogRepositoryPort {
     }
 
     @Override
-    public Change findByChangeId(UUID changeId) {
-        changeLogRepository.findByChangeEntityId(changeId).ifPresent(changeLogEntity -> {
-            log.info("ChangeLog found for changeId {}: {}", changeId, changeLogEntity);
-        });
-        return null;
+    public List<ChangeLog> findByChangeId(UUID changeId) {
+        changeLogRepository.findByChangeEntityId(changeId)
+                .forEach(changeLogEntity -> log.info("ChangeLog found: {}", changeLogEntity.getId()));
+        return changeLogMapper.map(changeLogRepository.findByChangeEntityId(changeId));
+    }
+
+    @Override
+    public ChangeLog findById(UUID id) {
+        return changeLogRepository.findById(id).map(changeLogMapper::fromEntityToModel).orElse(null);
     }
 }

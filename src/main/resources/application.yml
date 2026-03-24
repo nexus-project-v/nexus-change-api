@@ -12,7 +12,7 @@ server:
 
 spring:
   application:
-    name: nexus-transaction-api
+    name: nexus-change-api
   main:
     allow-circular-references: true
 
@@ -81,6 +81,11 @@ management:
   zipkin:
     tracing:
       endpoint: ${ZIPKIN_URL}
+  otlp:
+    tracing:
+      endpoint: ${OTLP_URL:http://localhost:4317}
+    logging:
+      endpoint: ${OTLP_URL:http://localhost:4317}
   #security:
   #  oauth2:
   #    client:
@@ -186,6 +191,11 @@ management:
   zipkin:
     tracing:
       endpoint: ${ZIPKIN_URL}
+  otlp:
+    tracing:
+      endpoint: ${OTLP_URL:http://localhost:4317}
+    logging:
+      endpoint: ${OTLP_URL:http://localhost:4317}
   #security:
   #  oauth2:
   #    client:

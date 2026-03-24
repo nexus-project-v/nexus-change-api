@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -27,6 +28,8 @@ public class ChangeLog implements Serializable {
 
     @Schema(description = "Component of Change", ref = "Component")
     private UUID changeId;
+
+    private LocalDateTime createdDate;
 
     public void update(UUID id, ChangeLog change) {
         this.id = id;

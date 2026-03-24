@@ -17,6 +17,7 @@ public interface ChangeLogMapper {
 
     @InheritInverseConfiguration
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "createdDate", source = "createdDate")
     ChangeLog fromEntityToModel(ChangeLogEntity changeLogEntity);
 
     List<ChangeLog> map(List<ChangeLogEntity> changeLogEntities);

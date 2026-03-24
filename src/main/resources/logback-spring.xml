@@ -1,15 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml" />
-    <appender name="LOGSTASH" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./infrastructure/elk-docker-compose/logs/nexus-logs.log</file> <!-- add your log file path -->.
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>./logs/nexus-logs-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>1</maxHistory><!-- log file will override after one day-->
-        </rollingPolicy>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+
+    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeMdc>true</includeMdc>
+            <customFields>{"app":"${spring.application.name}"}</customFields>
+        </encoder>
     </appender>
+
     <root level="INFO">
-        <appender-ref ref="LOGSTASH" />
+        <appender-ref ref="JSON"/>
     </root>
+
 </configuration>
