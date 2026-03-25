@@ -143,5 +143,50 @@ class ChangeStatusServiceTest {
         verify(changeRepository, times(1)).findById(changeId);
         verify(changeLogRepositoryPort, times(0)).findByChangeId(changeId);
     }
+
+    @Test
+    @DisplayName("getStatus should use fallback timestamp and WARN level for rejected logs")
+    void getStatus_shouldUseFallbackTimestampAndWarnLevelForRejectedLogs() {
+        UUID changeId = UUID.randomUUID();
+        LocalDateTime createdDate = LocalDateTime.of(2026, 3, 24, 9, 0);
+        LocalDateTime lastModifiedDate = LocalDateTime.of(2026, 3, 24, 10, 0);
+
+        ChangeEntity entity = changeEntity(changeId, ChangeStatus.REJECTED, createdDate, lastModifiedDate);
+        when(changeRepository.findById(changeId)).thenReturn(Optional.of(entity));
+        when(changeLogRepositoryPort.findByChangeId(changeId)).thenReturn(List.of(
+                changeLog(changeId, "REJECTED", null)
+        ));
+
+        ChangeStatusResponse result = changeStatusService.getStatus(changeId);
+
+        Instant expectedUpdatedAt = lastModifiedDate.atZone(ZoneId.systemDefault()).toInstant();
+        assertThat(result.getUpdatedAt()).isEqualTo(expectedUpdatedAt);
+        assertThat(result.getTimeline()).hasSize(1);
+        assertThat(result.getTimeline().get(0).getTimestamp()).isEqualTo(expectedUpdatedAt);
+        assertThat(result.getLog_change()).hasSize(1);
+        assertThat(result.getLog_change().get(0).getLevel()).isEqualTo("WARN");
+        assertThat(result.getLog_change().get(0).getMessage()).isEqualTo("Status alterado para REJECTED");
+    }
+
+    @Test
+    @DisplayName("getStatus should default log message and level when change log status is null")
+    void getStatus_shouldDefaultLogMessageAndLevelWhenChangeLogStatusIsNull() {
+        UUID changeId = UUID.randomUUID();
+        LocalDateTime createdDate = LocalDateTime.of(2026, 3, 24, 7, 30);
+
+        ChangeEntity entity = changeEntity(changeId, ChangeStatus.CREATED, createdDate, null);
+        when(changeRepository.findById(changeId)).thenReturn(Optional.of(entity));
+        when(changeLogRepositoryPort.findByChangeId(changeId)).thenReturn(List.of(
+                changeLog(changeId, null, createdDate.plusMinutes(5))
+        ));
+
+        ChangeStatusResponse result = changeStatusService.getStatus(changeId);
+
+        assertThat(result.getTimeline()).hasSize(1);
+        assertThat(result.getTimeline().get(0).getEvent()).isNull();
+        assertThat(result.getLog_change()).hasSize(1);
+        assertThat(result.getLog_change().get(0).getLevel()).isEqualTo("INFO");
+        assertThat(result.getLog_change().get(0).getMessage()).isEqualTo("Status não informado");
+    }
 }
 
