@@ -1,10 +1,10 @@
 # Spring Boot 3 API
 
-Este projeto é uma API desenvolvida em Spring Boot 3. Este README fornece instruções para desenvolvedores que desejam rodar o projeto localmente, incluindo como rodar o JAR usando Maven, configurar o ambiente no IntelliJ IDEA, utilizar arquivos `.env` para gerenciar variáveis de ambiente e como rodar o PostgreSQL e o SonarQube usando Docker Compose.
+Este projeto é uma API desenvolvida em Spring Boot 3.3.3. Este README fornece instruções para desenvolvedores que desejam rodar o projeto localmente, incluindo como rodar o JAR usando Maven, configurar o ambiente no IntelliJ IDEA, utilizar arquivos `.env` para gerenciar variáveis de ambiente e como rodar o PostgreSQL e o SonarQube usando Docker Compose.
 
 ## Pré-requisitos
 
-- Java 17+
+- Java 21+
 - Maven 3.6+
 - Docker e Docker Compose
 - IntelliJ IDEA
@@ -13,14 +13,14 @@ Este projeto é uma API desenvolvida em Spring Boot 3. Este README fornece instr
 
 1. Clone o repositório:
     ```bash
-    git clone https://github.com/fiapg70/sevenfood-client-api
-    cd sevenfood-client-api
+    git clone https://github.com/nexus-project-v/nexus-change-api
+    cd nexus-change-api
     ```
 
 2. Compile e rode o JAR:
     ```bash
     mvn clean install
-    java -jar target/nome-do-jar.jar
+    java -jar target/nexus-change-api.jar
     ```
 
 ## Configurando o Ambiente no IntelliJ IDEA
@@ -36,14 +36,15 @@ Este projeto é uma API desenvolvida em Spring Boot 3. Este README fornece instr
              - **VM options**: `-Dspring.profiles.active=prod` (Configuração para perfil de produção)
              - **Environment variables**: Clique no ícone `...` e adicione as variáveis necessárias:
                ```properties
-                API_PORT=9999
-                AWS_ACCESS_KEY_ID=<<Valor>>
-                AWS_REGION=<<Valor>>
-                AWS_SECRET_ACCESS_KEY=<<Valor>>
-                DATABASE_PASSWORD=<<Valor>>
-                DATABASE_URL=jdbc:postgresql://localhost:5432/<<DatabaseValor>>
-                DATABASE_USERNAME=<<Valor>>
-                SECURITY_JWT_SECRET_KEY=<<Valor>>
+                DATABASE_PASSWORD=<<PASSWORD>>!;
+                DATABASE_URL=jdbc:postgresql://IP:PORTA/DATABASE_NAME;
+                DATABASE_USERNAME=DATABASE_USERNAME;
+                KAFKA_BOOTSTRAP_SERVERS=IP:9092;
+                OTLP_URL=http://IP:4317;
+                PAYMENT_PROVIDER=provider-local;
+                SECURITY_JWT_SECRET_KEY=<<SECRET_KEY>>;
+                SWAGGER_API_URL=http://IP:9933/api;
+                ZIPKIN_URL=http://IP:9411/api/v2/spans
                ```
 
 3. Rode a aplicação:
@@ -55,14 +56,15 @@ Para gerenciar variáveis de ambiente usando arquivos `.env`, siga estas etapas:
 
 1. Crie um arquivo `.env` na raiz do projeto:
     ```properties
-    API_PORT=9999
-    AWS_ACCESS_KEY_ID=<<Valor>>
-    AWS_REGION=<<Valor>>
-    AWS_SECRET_ACCESS_KEY=<<Valor>>
-    DATABASE_PASSWORD=<<Valor>>
-    DATABASE_URL=jdbc:postgresql://localhost:5432/<<DatabaseValor>>
-    DATABASE_USERNAME=<<Valor>>
-    SECURITY_JWT_SECRET_KEY=<<Valor>>
+    DATABASE_PASSWORD=<<PASSWORD>>!;
+                DATABASE_URL=jdbc:postgresql://IP:PORTA/DATABASE_NAME;
+                DATABASE_USERNAME=DATABASE_USERNAME;
+                KAFKA_BOOTSTRAP_SERVERS=IP:9092;
+                OTLP_URL=http://IP:4317;
+                PAYMENT_PROVIDER=provider-local;
+                SECURITY_JWT_SECRET_KEY=<<SECRET_KEY>>;
+                SWAGGER_API_URL=http://IP:9933/api;
+                ZIPKIN_URL=http://IP:9411/api/v2/spans
     ```
 
 2. Adicione a dependência `spring-boot-dotenv` ao seu `pom.xml`:
@@ -130,8 +132,4 @@ Para rodar o perfil de produção, adicione a opção `-Dspring.profiles.active=
 mvn spring-boot:run -Dspring-boot.run.profiles=prod
 ```
 Ambientes: prod,hom,dev
-# nexus-change-api
-# nexus-change-api
-# nexus-change-api
-# nexus-change-api
-# nexus-change-api
+

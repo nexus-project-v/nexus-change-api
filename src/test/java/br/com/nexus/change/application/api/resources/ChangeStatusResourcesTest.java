@@ -86,7 +86,7 @@ class ChangeStatusResourcesTest {
 
         when(changeStatusService.getStatus(changeId)).thenReturn(response);
 
-        mockMvc.perform(get("/v1/changes/{changeId}/status", changeId))
+        mockMvc.perform(get("/v1/change-status/{changeId}", changeId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.changeId").value(changeId.toString()))
                 .andExpect(jsonPath("$.changeStatus").value("DEPLOYED"))
@@ -104,7 +104,7 @@ class ChangeStatusResourcesTest {
         when(changeStatusService.getStatus(changeId))
                 .thenThrow(new ResourceFoundException("Change não encontrada para o id informado"));
 
-        mockMvc.perform(get("/v1/changes/{changeId}/status", changeId))
+        mockMvc.perform(get("/v1/change-status/{changeId}", changeId))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value("Change não encontrada para o id informado"));
 
